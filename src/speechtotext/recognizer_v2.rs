@@ -1,3 +1,6 @@
+use async_stream::try_stream;
+use futures_core::Stream;
+use log::trace;
 use crate::api::grpc::google::cloud::speechtotext::v2::speech_client::SpeechClient;
 use crate::api::grpc::google::cloud::speechtotext::v2::streaming_recognize_request::StreamingRequest;
 use crate::api::grpc::google::cloud::speechtotext::v2::{
@@ -73,6 +76,32 @@ impl RecognizerV2 {
             audio_receiver: Some(audio_receiver),
             result_sender: None,
         })
+    }
+
+
+    /// Initiates bidirectional streaming. Returns
+    /// asynchronous stream of streaming recognition results
+    /// Audio data must be fed into recognizer via channel sender
+    /// returned by function get_audio_sink.
+    #[allow(unreachable_code)]
+    pub async fn streaming_recognize_async_stream(
+        &mut self,
+    ) -> impl Stream<Item =crate::errors::Result<StreamingRecognizeResponse>> + '_ {
+        try_stream! {
+                // yank self.audio_receiver so that we can consume it
+                if let Some(audio_receiver) = self.audio_receiver.take() {
+                    let streaming_recognize_result= self.speech_client.streaming_recognize(ReceiverStream::new(audio_receiver)).await;
+
+                    let mut response_stream: Streaming<StreamingRecognizeResponse> =
+                        streaming_recognize_result?.into_inner();
+
+                    trace!("streaming_recognize: entering loop");
+                    while let Some(streaming_recognize_response) = response_stream.message().await? {
+                        yield streaming_recognize_response;
+                    }
+                    trace!("streaming_recognize: leaving loop");
+                }
+        }
     }
 
     /// Convenience function so that client does not have to create full StreamingRecognizeRequest
