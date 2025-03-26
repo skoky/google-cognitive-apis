@@ -1,8 +1,9 @@
-use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v1::{
-    recognition_config::AudioEncoding, RecognitionConfig, StreamingRecognitionConfig,
-};
+use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::{RecognitionConfig, RecognizeRequest, StreamingRecognitionConfig};
 use google_cognitive_apis::speechtotext::recognizer::Recognizer;
 
+use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::recognition_config::DecodingConfig;
+use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::recognize_request::AudioSource;
+use google_cognitive_apis::speechtotext::recognizer_v2::RecognizerV2;
 use log::*;
 use std::env;
 use std::fs::{self, File};
@@ -17,30 +18,26 @@ async fn main() {
     env_logger::init();
     info!("streaming recognizer example");
 
-    let credentials = fs::read_to_string("/tmp/cred.json").unwrap();
+    let recognizer_string = format!("projects/{PROJECT_ID}/locations/global/recognizers/{RECOGNIZER}");
+    println!("Using recognizer {}", recognizer_string);
+    let credentials = fs::read_to_string("cred.json").unwrap();
+
     let streaming_config = StreamingRecognitionConfig {
         config: Some(RecognitionConfig {
-            encoding: AudioEncoding::Linear16 as i32,
-            sample_rate_hertz: 8000,
-            audio_channel_count: 1,
-            enable_separate_recognition_per_channel: false,
-            language_code: "en-US".to_string(),
-            max_alternatives: 1,
-            profanity_filter: false,
-            speech_contexts: vec![],
-            enable_word_time_offsets: false,
-            enable_automatic_punctuation: false,
-            diarization_config: None,
-            metadata: None,
             model: "".to_string(),
-            use_enhanced: false,
+            language_codes: vec!["cs-CZ".to_string()],
+            features: None,
+            adaptation: None,
+            transcript_normalization: None,
+            translation_config: None,
+            decoding_config: Some(DecodingConfig::AutoDecodingConfig{ 0: Default::default() }),
         }),
-        single_utterance: false,
-        interim_results: true,
+        config_mask: None,
+        streaming_features: None,
     };
 
     let mut recognizer =
-        Recognizer::create_streaming_recognizer(credentials, streaming_config, None)
+        RecognizerV2::create_streaming_recognizer(credentials, streaming_config, None, recognizer_string.clone())
             .await
             .unwrap();
 
@@ -66,7 +63,7 @@ async fn main() {
     });
 
     tokio::spawn(async move {
-        let mut file = File::open("/tmp/hello_rust_8.wav").unwrap();
+        let mut file = File::open("test_data.wav").unwrap();
         let chunk_size = 1024;
 
         loop {
@@ -80,7 +77,7 @@ async fn main() {
                 break;
             }
 
-            let streaming_request = Recognizer::streaming_request_from_bytes(chunk);
+            let streaming_request = RecognizerV2::streaming_request_from_bytes(chunk, recognizer_string.clone());
 
             audio_sender.send(streaming_request).await.unwrap();
 
