@@ -9,8 +9,8 @@ use std::env;
 use std::fs::{self, File};
 use std::io::Read;
 
-const PROJECT_ID: &str  = "speech-437815";
-const RECOGNIZER: &str  = "hugo";
+const PROJECT_ID: &str  = "...";
+const RECOGNIZER: &str  = "...";
 
 #[tokio::main]
 async fn main() {

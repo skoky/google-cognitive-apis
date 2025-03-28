@@ -10,8 +10,8 @@ use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::recognize
 use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::speech_client::SpeechClient;
 use google_cognitive_apis::speechtotext::recognizer_v2::RecognizerV2;
 
-const PROJECT_ID: &str  = "speech-437815";
-const RECOGNIZER: &str  = "hugo";
+const PROJECT_ID: &str  = "...";
+const RECOGNIZER: &str  = "...";
 
 #[tokio::main]
 async fn main() {
