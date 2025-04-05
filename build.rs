@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_client(true)
         .build_server(false)
         .out_dir("src/grpc_stubs")
-        .compile(
+        .compile_protos(
             &[
                 "res/proto/google/cloud/dialogflow/v2/session.proto",
                 "res/proto/google/cloud/dialogflow/v2beta1/session.proto",
@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_client(true)
         .build_server(false)
         .out_dir("src/grpc_stubs/dialogflow_cx")
-        .compile(
+        .compile_protos(
             &[
                 "res/proto/google/cloud/dialogflow/cx/v3/session.proto",
                 "res/proto/google/cloud/dialogflow/cx/v3beta1/session.proto",

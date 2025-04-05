@@ -1175,7 +1175,8 @@ pub mod speech_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use tonic::codegen::*;
+    use std::convert::TryInto;
+use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service that implements Google Cloud Speech API.
     #[derive(Debug, Clone)]
@@ -1186,7 +1187,7 @@ pub mod speech_client {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
-            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D: TryInto<tonic::transport::Endpoint>,
             D::Error: Into<StdError>,
         {
             let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
