@@ -1,4 +1,7 @@
-use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::{RecognitionConfig, RecognizeRequest, StreamingRecognitionConfig};
+use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::{
+    ExplicitDecodingConfig, RecognitionConfig, RecognizeRequest, StreamingRecognitionConfig,
+    StreamingRecognitionFeatures,
+};
 use google_cognitive_apis::speechtotext::recognizer::Recognizer;
 
 use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::recognition_config::DecodingConfig;
@@ -8,6 +11,8 @@ use log::*;
 use std::env;
 use std::fs::{self, File};
 use std::io::Read;
+use std::time::Duration;
+use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::streaming_recognition_features::VoiceActivityTimeout;
 
 const PROJECT_ID: &str  = "...";
 const RECOGNIZER: &str  = "...";
@@ -18,7 +23,8 @@ async fn main() {
     env_logger::init();
     info!("streaming recognizer example");
 
-    let recognizer_string = format!("projects/{PROJECT_ID}/locations/global/recognizers/{RECOGNIZER}");
+    let recognizer_string =
+        format!("projects/{PROJECT_ID}/locations/global/recognizers/{RECOGNIZER}");
     println!("Using recognizer {}", recognizer_string);
     let credentials = fs::read_to_string("cred.json").unwrap();
 
@@ -30,16 +36,36 @@ async fn main() {
             adaptation: None,
             transcript_normalization: None,
             translation_config: None,
-            decoding_config: Some(DecodingConfig::AutoDecodingConfig{ 0: Default::default() }),
+            decoding_config: Some(DecodingConfig::ExplicitDecodingConfig(
+                ExplicitDecodingConfig {
+                    encoding: 1,
+                    sample_rate_hertz: 48000,
+                    audio_channel_count: 1,
+                },
+            )),
         }),
         config_mask: None,
-        streaming_features: None,
+        streaming_features: Some(StreamingRecognitionFeatures {
+            enable_voice_activity_events: false,
+            interim_results: false,
+            voice_activity_timeout: Some(VoiceActivityTimeout {
+                speech_start_timeout: Some(prost_types::Duration {
+                    seconds: 30,
+                    nanos: 0,
+                }),
+                speech_end_timeout: Some(prost_types::Duration { seconds: 30, nanos: 0 })
+            }),
+        }),
     };
 
-    let mut recognizer =
-        RecognizerV2::create_streaming_recognizer(credentials, streaming_config, None, recognizer_string.clone())
-            .await
-            .unwrap();
+    let mut recognizer = RecognizerV2::create_streaming_recognizer(
+        credentials,
+        streaming_config,
+        None,
+        recognizer_string.clone(),
+    )
+    .await
+    .unwrap();
 
     // Make sure to use take_audio_sink, not get_audio_sink here! get_audio_sink is cloning the sender
     // contained in recognizer client whereas take_audio_sink will take the sender/sink out of the wrapping option.
@@ -63,7 +89,7 @@ async fn main() {
     });
 
     tokio::spawn(async move {
-        let mut file = File::open("test_data.wav").unwrap();
+        let mut file = File::open("test_files/test_data_cz.wav.wav").unwrap();
         let chunk_size = 1024;
 
         loop {
@@ -77,7 +103,8 @@ async fn main() {
                 break;
             }
 
-            let streaming_request = RecognizerV2::streaming_request_from_bytes(chunk, recognizer_string.clone());
+            let streaming_request =
+                RecognizerV2::streaming_request_from_bytes(chunk, recognizer_string.clone());
 
             audio_sender.send(streaming_request).await.unwrap();
 

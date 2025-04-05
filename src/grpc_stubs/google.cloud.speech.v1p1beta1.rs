@@ -1175,8 +1175,7 @@ pub mod speech_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service that implements Google Cloud Speech API.
     #[derive(Debug, Clone)]

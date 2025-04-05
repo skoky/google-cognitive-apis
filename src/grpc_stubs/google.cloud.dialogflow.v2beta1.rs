@@ -682,8 +682,7 @@ pub mod environments_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service for managing [Environments][google.cloud.dialogflow.v2beta1.Environment].
     #[derive(Debug, Clone)]
@@ -1294,8 +1293,7 @@ pub mod agents_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service for managing [Agents][google.cloud.dialogflow.v2beta1.Agent].
     #[derive(Debug, Clone)]
@@ -1877,8 +1875,7 @@ pub mod contexts_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service for managing [Contexts][google.cloud.dialogflow.v2beta1.Context].
     #[derive(Debug, Clone)]
@@ -3927,8 +3924,7 @@ pub mod intents_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service for managing [Intents][google.cloud.dialogflow.v2beta1.Intent].
     #[derive(Debug, Clone)]
@@ -4636,8 +4632,7 @@ pub mod entity_types_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service for managing [EntityTypes][google.cloud.dialogflow.v2beta1.EntityType].
     #[derive(Debug, Clone)]
@@ -5235,8 +5230,7 @@ pub mod session_entity_types_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Service for managing [SessionEntityTypes][google.cloud.dialogflow.v2beta1.SessionEntityType].
     #[derive(Debug, Clone)]
@@ -6288,8 +6282,7 @@ pub mod sessions_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// A service used for session interactions.
     ///

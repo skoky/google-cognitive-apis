@@ -2138,8 +2138,7 @@ pub mod speech_client {
         clippy::wildcard_imports,
         clippy::let_unit_value,
     )]
-    use std::convert::TryInto;
-use tonic::codegen::*;
+    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     /// Enables speech transcription and resource management.
     #[derive(Debug, Clone)]
