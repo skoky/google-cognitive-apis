@@ -1,5 +1,7 @@
 //! Contains common utility & convenience functions.
 //! All functions here are intended for internal use only.
+
+use std::str::FromStr;
 use crate::errors::Result;
 use crate::CERTIFICATES;
 use gouth::Builder;
