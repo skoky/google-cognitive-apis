@@ -16,8 +16,8 @@ documentation = "https://jabber-tools.github.io/google_cognitive_apis/doc/0.2.0/
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prost = "0"
-prost-types = "0"
+prost = "0.13"
+prost-types = "0.13"
 tonic = { version = "0.12", features = ["transport", "tls"] }
 serde = "1"
 serde_json = "1"
