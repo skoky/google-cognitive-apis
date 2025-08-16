@@ -1,17 +1,14 @@
 use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::{
-    ExplicitDecodingConfig, RecognitionConfig, RecognizeRequest, StreamingRecognitionConfig,
+    ExplicitDecodingConfig, RecognitionConfig,  StreamingRecognitionConfig,
     StreamingRecognitionFeatures,
 };
-use google_cognitive_apis::speechtotext::recognizer::Recognizer;
 
 use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::recognition_config::DecodingConfig;
-use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::recognize_request::AudioSource;
 use google_cognitive_apis::speechtotext::recognizer_v2::RecognizerV2;
 use log::*;
 use std::env;
 use std::fs::{self, File};
 use std::io::Read;
-use std::time::Duration;
 use google_cognitive_apis::api::grpc::google::cloud::speechtotext::v2::streaming_recognition_features::VoiceActivityTimeout;
 
 const PROJECT_ID: &str  = "...";
@@ -89,7 +86,7 @@ async fn main() {
     });
 
     tokio::spawn(async move {
-        let mut file = File::open("test_files/test_data_cz.wav.wav").unwrap();
+        let mut file = File::open("test_files/test_data_cz.wav").unwrap();
         let chunk_size = 1024;
 
         loop {
@@ -106,7 +103,9 @@ async fn main() {
             let streaming_request =
                 RecognizerV2::streaming_request_from_bytes(chunk, recognizer_string.clone());
 
-            audio_sender.send(streaming_request).await.unwrap();
+            if let Err(e) = audio_sender.send(streaming_request).await {
+                panic!("streaming_recognize error {:?}", e);
+            }
 
             if n < chunk_size {
                 break;
