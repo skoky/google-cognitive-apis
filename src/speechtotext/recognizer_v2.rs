@@ -67,7 +67,9 @@ impl RecognizerV2 {
             streaming_request: Some(StreamingRequest::StreamingConfig(config)),
         };
 
-        audio_sender.send(streaming_config).await;
+        if let Err(e) = audio_sender.send(streaming_config).await {
+            panic!("streaming_recognize error {:?}", e);
+        }
 
         Ok(RecognizerV2 {
             speech_client,
@@ -180,7 +182,9 @@ impl RecognizerV2 {
 
             while let Some(streaming_recognize_response) = response_stream.message().await? {
                 if let Some(result_sender) = &self.result_sender {
-                    result_sender.send(streaming_recognize_response).await;
+                    if let Err(e) = result_sender.send(streaming_recognize_response).await {
+                        panic!("streaming_recognize error {:?}", e);
+                    }
                 }
             }
         }
